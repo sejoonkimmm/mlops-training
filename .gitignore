@@ -1,0 +1,28 @@
+# Secrets
+.env
+*.pem
+*.key
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# Kubernetes
+kubeconfig*.yaml
+*.kubeconfig
+
+# Temp
+tmp/
+*.tmp
+*.log

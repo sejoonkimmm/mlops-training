@@ -1,0 +1,28 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: mlops
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  description: MLOps Platform
+  sourceRepos:
+    - https://github.com/sejoonkimmm/mlops-training.git
+    - https://charts.bitnami.com/bitnami
+    - https://community-charts.github.io/helm-charts
+    - https://prometheus-community.github.io/helm-charts
+  destinations:
+    - namespace: mlflow
+      server: https://kubernetes.default.svc
+    - namespace: minio
+      server: https://kubernetes.default.svc
+    - namespace: monitoring
+      server: https://kubernetes.default.svc
+    - namespace: model-serving
+      server: https://kubernetes.default.svc
+    - namespace: training
+      server: https://kubernetes.default.svc
+  clusterResourceWhitelist:
+    - group: ""
+      kind: Namespace

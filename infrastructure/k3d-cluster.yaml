@@ -1,0 +1,95 @@
+# ============================================================
+# k3d Cluster Configuration
+# Cluster: 1 server (master) + 3 agents (workers)
+# Features: local registry, shared volumes, node labels
+# ============================================================
+apiVersion: k3d.io/v1alpha5
+kind: Simple
+metadata:
+  name: mlops
+servers: 1
+agents: 3
+
+# Pin k3s version for reproducibility
+image: rancher/k3s:v1.31.5-k3s1
+
+# Kubernetes API
+kubeAPI:
+  hostIP: "0.0.0.0"
+  hostPort: "6443"
+
+# Port mappings for services
+ports:
+  # HTTP / HTTPS ingress
+  - port: 8080:80
+    nodeFilters:
+      - loadbalancer
+  - port: 8443:443
+    nodeFilters:
+      - loadbalancer
+  # ArgoCD UI (NodePort)
+  - port: 31443:31443
+    nodeFilters:
+      - loadbalancer
+  # MLflow UI
+  - port: 5000:5000
+    nodeFilters:
+      - loadbalancer
+  # MinIO Console
+  - port: 9001:9001
+    nodeFilters:
+      - loadbalancer
+
+# Shared volumes across all nodes
+volumes:
+  - volume: /tmp/k3d-mlops/data:/data
+    nodeFilters:
+      - server:*
+      - agent:*
+  - volume: /tmp/k3d-mlops/models:/models
+    nodeFilters:
+      - server:*
+      - agent:*
+  - volume: /tmp/k3d-mlops/experiments:/experiments
+    nodeFilters:
+      - server:*
+      - agent:*
+
+# Local container registry (for ML images)
+registries:
+  create:
+    name: mlops-registry.localhost
+    host: "0.0.0.0"
+    hostPort: "5555"
+
+# k3s / k3d options
+options:
+  k3s:
+    extraArgs:
+      # Increase API timeout for long-running training jobs
+      - arg: --kube-apiserver-arg=request-timeout=300s
+        nodeFilters:
+          - server:*
+    nodeLabels:
+      # Training nodes (agent-0, agent-1) - will get fake GPUs
+      - label: node-role=training
+        nodeFilters:
+          - agent:0
+          - agent:1
+      # Inference node (agent-2)
+      - label: node-role=inference
+        nodeFilters:
+          - agent:2
+      # All agents are ML workload nodes
+      - label: workload-type=ml
+        nodeFilters:
+          - agent:*
+
+  kubeconfig:
+    updateDefaultKubeconfig: true
+    switchCurrentContext: true
+
+  k3d:
+    wait: true
+    timeout: "180s"
+    disableLoadbalancer: false

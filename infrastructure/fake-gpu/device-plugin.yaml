@@ -1,0 +1,51 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fake-gpu-config
+  namespace: kube-system
+data:
+  devices.yaml: |
+    - resourceName: nvidia.com/gpu
+      count: 1
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: fake-gpu-device-plugin
+  namespace: kube-system
+spec:
+  selector:
+    matchLabels:
+      app: fake-gpu-device-plugin
+  template:
+    metadata:
+      labels:
+        app: fake-gpu-device-plugin
+    spec:
+      nodeSelector:
+        node-role: training
+      priorityClassName: system-node-critical
+      tolerations:
+        - operator: Exists
+          effect: NoSchedule
+      containers:
+        - name: device-plugin
+          image: registry.k8s.io/e2e-test-images/sample-device-plugin:1.0
+          command:
+            - /sample-device-plugin
+            - -config
+            - /config/devices.yaml
+          volumeMounts:
+            - name: device-plugin
+              mountPath: /var/lib/kubelet/device-plugins
+            - name: config
+              mountPath: /config
+          securityContext:
+            privileged: true
+      volumes:
+        - name: device-plugin
+          hostPath:
+            path: /var/lib/kubelet/device-plugins
+        - name: config
+          configMap:
+            name: fake-gpu-config

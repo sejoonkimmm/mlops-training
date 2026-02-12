@@ -1,0 +1,22 @@
+auth:
+  rootUser: admin
+  rootPassword: minio123!
+
+defaultBuckets: "mlflow-artifacts,model-registry,datasets"
+
+persistence:
+  size: 10Gi
+
+resources:
+  requests:
+    cpu: 250m
+    memory: 256Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi
+
+service:
+  type: ClusterIP
+  ports:
+    api: 9000
+    console: 9001

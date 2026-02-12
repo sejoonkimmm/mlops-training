@@ -1,0 +1,9 @@
+# Fake GPU Operator - Custom GPU Topology
+# Simulates NVIDIA A100 80GB on training nodes
+topology:
+  nodePools:
+    default:
+      gpus:
+        - type: "A100-SXM4-80GB"
+          memory: "80Gi"
+          count: 1
