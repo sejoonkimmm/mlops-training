@@ -107,6 +107,7 @@ def main():
             "learning_rate": args.lr,
             "optimizer": "Adam",
             "device": str(device),
+            "model_params": sum(p.numel() for p in model.parameters()),
         })
 
         test_acc = 0.0
