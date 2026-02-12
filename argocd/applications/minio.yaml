@@ -10,7 +10,7 @@ spec:
   sources:
     - repoURL: https://charts.bitnami.com/bitnami
       chart: minio
-      targetRevision: "14.*"
+      targetRevision: "17.*"
       helm:
         valueFiles:
           - $values/manifests/minio/values.yaml

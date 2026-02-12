@@ -1,12 +1,15 @@
 backendStore:
-  filepath: /mlflow/mlruns
+  defaultSqlitePath: "/mlflow/mlflow.db"
 
-artifactRoot: s3://mlflow-artifacts
+artifactRoot:
+  s3:
+    enabled: true
+    bucket: "mlflow-artifacts"
+    awsAccessKeyId: "admin"
+    awsSecretAccessKey: "minio123!"
 
 extraEnvVars:
-  AWS_ACCESS_KEY_ID: admin
-  AWS_SECRET_ACCESS_KEY: minio123!
-  MLFLOW_S3_ENDPOINT_URL: http://minio.minio.svc.cluster.local:9000
+  MLFLOW_S3_ENDPOINT_URL: "http://minio.minio.svc.cluster.local:9000"
 
 service:
   type: ClusterIP
