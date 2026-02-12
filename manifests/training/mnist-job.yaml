@@ -1,0 +1,44 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: mnist-training
+  namespace: training
+spec:
+  backoffLimit: 2
+  template:
+    metadata:
+      labels:
+        app: mnist-training
+    spec:
+      nodeSelector:
+        node-role: training
+      containers:
+        - name: trainer
+          image: mlops-registry.localhost:5555/mnist-training:v1
+          args:
+            - --epochs=5
+            - --batch-size=64
+            - --lr=0.001
+            - --data-dir=/data/mnist
+            - --experiment-name=mnist-training
+          env:
+            - name: PYTHONUNBUFFERED
+              value: "1"
+            - name: GIT_PYTHON_REFRESH
+              value: "quiet"
+            - name: MLFLOW_TRACKING_URI
+              value: "http://mlflow.mlflow.svc.cluster.local:5000"
+            - name: MLFLOW_S3_ENDPOINT_URL
+              value: "http://minio.minio.svc.cluster.local:9000"
+            - name: AWS_ACCESS_KEY_ID
+              value: "admin"
+            - name: AWS_SECRET_ACCESS_KEY
+              value: "minio123!"
+          resources:
+            requests:
+              cpu: "1"
+              memory: 1Gi
+            limits:
+              cpu: "2"
+              memory: 2Gi
+      restartPolicy: Never
