@@ -8,9 +8,9 @@ metadata:
 spec:
   project: mlops
   sources:
-    - repoURL: https://charts.bitnami.com/bitnami
+    - repoURL: https://charts.min.io/
       chart: minio
-      targetRevision: "17.*"
+      targetRevision: "5.*"
       helm:
         valueFiles:
           - $values/manifests/minio/values.yaml

@@ -10,6 +10,7 @@ spec:
   sourceRepos:
     - https://github.com/sejoonkimmm/mlops-training.git
     - https://charts.bitnami.com/bitnami
+    - https://charts.min.io/
     - https://community-charts.github.io/helm-charts
     - https://prometheus-community.github.io/helm-charts
   destinations:
