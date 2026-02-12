@@ -14,7 +14,7 @@ spec:
         node-role: training
       containers:
         - name: trainer
-          image: mlops-registry.localhost:5555/mnist-training:v1
+          image: mlops-registry.localhost:5555/mnist-training:v20260212-f68e85f
           args:
             - --epochs=5
             - --batch-size=64
